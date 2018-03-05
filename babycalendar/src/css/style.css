@@ -1,0 +1,30 @@
+.App{
+    /* The image used */
+    background-image: url('../images/CityBackground.jpg');
+
+    /* Full height */
+    height: 100vh; 
+    
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+    
+}
+.app-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.loading{
+    text-align: center;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    
+}

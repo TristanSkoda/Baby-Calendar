@@ -1,41 +1,74 @@
 import React, { Component } from 'react';
+import {BrowserRouter, Route } from 'react-router-dom';
+import { app} from './base';
+import { Spinner} from '@blueprintjs/core';
 
-import './css/styles.css';
+
+import './css/style.css';
 import './css/general.css';
 import './css/reset.css';
 
-import { base } from './base';
+import Logout from './components/logout';
+import Login from './components/login';
+import Header from './components/header';
 
 
 class App extends Component {
+  constructor(){
+    super()
+    this.state = {
+      authenticated: false,
+      loading: true
+    }
+  }
+  componentWillMount(){
+    this.removeAuthListener = app.auth().onAuthStateChanged(user=>{
+      console.log('user', user);
+      if (user) {
+        this.setState({
+          authenticated: true,
+          loading: false
+        })
+      }else {
+        this.setState({
+          authenticated: false,
+          loading: false
+        })
+      }
+    })
+  }
+
+  componentWillUnmount(){
+    this.removeAuthListener();
+  }
+
+
   render() {
-    return (
-      <div className="App">
-       <div className="login">
-        <div className="login-container">
-          <div className="signin">
-            <div className="signin-container">
-              <h1>Sign In</h1>
-              <form action="" onSubmit={this.handleSubmit}>
-                <input placeholder='Name / Email' type="text"/>
-                <input placeholder='******' type="password"/>
-                <input type="submit" >Sign In</input >
-              </form>
-              <a href="">Forgot your password?</a>
-            </div>
-          </div>
-          <div className="signup">
-            <div className="signup-container">
-              <h1></h1>
-              <p></p>
-              <button type='submit'>Sign Up</button>
-            </div>
-          </div>
+    if(this.state.loading === true){
+      return (
+        <div className="loading">
+          <h3>Loading</h3>
+          <Spinner/>
         </div>
-       </div>
+      )
+    }
+    console.log('auth.app:', this.state.authenticated);
+    return (
+      
+      <div className="App">
+        <BrowserRouter>
+          <div className="app-container" >
+            <Header authenticated={this.state.authenticated} />
+            
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/logout" component={Logout} />
+              
+            
+              {/* todo Component */}
+          </div>
+        </BrowserRouter>
       </div>
     );
   }
 }
-// http://verdewall.com/wp-content/uploads/2017/05/City-Background-403.jpg
 export default App;

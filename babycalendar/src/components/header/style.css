@@ -1,0 +1,19 @@
+.header{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;   
+}
+.header-container{
+    background-color: white;
+    border-radius:  0px 0px 6px 6px;
+    margin: 0 6%;
+    box-shadow:0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+    
+}
+
+.header-container-right{
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
