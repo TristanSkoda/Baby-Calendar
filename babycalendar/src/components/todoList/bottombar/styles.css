@@ -1,0 +1,40 @@
+.bottombar-container{
+    
+    border-radius: 30px;
+    background-color: #f1f1f1;
+    
+    display: flex;
+    align-items: center;
+    height: 60px;
+    box-shadow: 3px 4px 4px #888888;
+    justify-content: space-between;
+    margin-top: 10px;
+    
+    transition: 1s ease all;
+}
+
+.bottombar-container button{
+    outline: none;
+    cursor: pointer;
+    background-color: rgb(0,132,255);
+    border: none;
+    border-radius: 30px;
+    color: white;
+    padding: 0 32px;
+    text-align: center;
+    height: 100%;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    user-select: none;
+}
+
+.bottombar-container .selected{
+    background-color: rgb(0, 89, 255);
+    transition: .5s ease all;
+}
+
+.clearall:hover{
+    background-color: rgb(0, 89, 255);
+    transition: .5s ease all; 
+}

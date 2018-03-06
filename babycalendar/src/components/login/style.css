@@ -66,6 +66,7 @@
 .login .signup-container p{
     color: rgba(255, 255, 255, 0.863);
     margin-bottom: 35px;
+    line-height: 1.5;
     
 }
 .login .signup-container button{

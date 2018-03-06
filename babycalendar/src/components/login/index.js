@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Toaster, Intent } from '@blueprintjs/core';
+// import { Toaster, Intent } from '@blueprintjs/core';
 import { app } from '../../base'; 
 
 import './style.css';
@@ -44,7 +44,7 @@ authWithEmailAndPassword = event =>{
 
   render() {
     if(this.state.redirect === true){
-      return <Redirect to='/'/>
+      return <Redirect to='/todos'/>
     }
     return (
       <div className="login">
@@ -64,8 +64,8 @@ authWithEmailAndPassword = event =>{
           <div className="signup">
             <div className="signup-container">
               <h1>Sign Up</h1>
-              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deleniti adipisci sit dolor porro!</p>
-              <button type='submit'>Sign Up</button>
+              <p>If you want to sign up, you juste need to enter your informations in the sign in section.</p>
+              
             </div>
           </div>
         </div>

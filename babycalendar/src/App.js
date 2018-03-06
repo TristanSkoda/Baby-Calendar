@@ -8,9 +8,11 @@ import './css/style.css';
 import './css/general.css';
 import './css/reset.css';
 
+import Todos from './components/todoList/';
 import Logout from './components/logout';
 import Login from './components/login';
 import Header from './components/header';
+
 
 
 class App extends Component {
@@ -22,8 +24,7 @@ class App extends Component {
     }
   }
   componentWillMount(){
-    this.removeAuthListener = app.auth().onAuthStateChanged(user=>{
-      console.log('user', user);
+    this.removeAuthListener = app.auth().onAuthStateChanged(user=>{ 
       if (user) {
         this.setState({
           authenticated: true,
@@ -33,15 +34,17 @@ class App extends Component {
         this.setState({
           authenticated: false,
           loading: false
-        })
+        }) 
       }
     })
+    
   }
+
+
 
   componentWillUnmount(){
     this.removeAuthListener();
   }
-
 
   render() {
     if(this.state.loading === true){
@@ -52,19 +55,14 @@ class App extends Component {
         </div>
       )
     }
-    console.log('auth.app:', this.state.authenticated);
     return (
-      
       <div className="App">
         <BrowserRouter>
           <div className="app-container" >
-            <Header authenticated={this.state.authenticated} />
-            
+              {this.state.authenticated ? <Header />: null}
               <Route exact path="/login" component={Login} />
               <Route exact path="/logout" component={Logout} />
-              
-            
-              {/* todo Component */}
+              <Route exact path="/todos" component={Todos} />
           </div>
         </BrowserRouter>
       </div>

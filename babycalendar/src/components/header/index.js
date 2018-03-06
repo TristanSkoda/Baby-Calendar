@@ -7,8 +7,6 @@ import 'font-awesome/css/font-awesome.min.css';
 class Header extends Component {
 
   render() {
-    
-    console.log('props: ', this.props.authentificated);
     return (
       <div className="header">
         <div className="header-container">
@@ -16,17 +14,12 @@ class Header extends Component {
             
             </div>
             <div className="header-container-right">
-              {this.props.authentificated ? (
                 <div>
-                  <Link className="fas fa-list-ul" to="/todos">Todos</Link>
-                  <button className="fas fa-user" ></button>
-                  <button className="fas fa-ellipsis-v" ></button>
-                  <Link className="fas fa-sign-out-alt"  to="/"/>
+                  <Link  to="/todos"><i className="fas fa-list icons"></i></Link>
+                  <button className="fas fa-user icons" ></button>
+                  <button className="fas fa-ellipsis-v icons" ></button>
+                  <Link to="/logout"><i className="fas fa-sign-out-alt icons"></i></Link>
                 </div>
-                ) : (
-                  <Link  to="/login" >Log In</Link>
-                )
-            }
             </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ class Logout extends Component {
 
   render() {
     if (this.state.redirect === true) {
-        return <Redirect to="/" />
+        return <Redirect to="/login" />
     }
     return (
     <div className="loading">
