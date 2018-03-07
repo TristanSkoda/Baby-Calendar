@@ -5,7 +5,6 @@ import './styles.css'
 class TopBar extends Component {
   constructor(props) {
     super(props)
-
     this.state = { value: '' }
   }
   handleChange = event => {
