@@ -2,42 +2,91 @@
     
     border-radius: 30px;
     background-color: #f1f1f1;
-    cursor: pointer;
+    
     display: flex;
     align-items: center;
     height: 60px;
-    box-shadow: 3px 4px 4px #888888;
+    min-width: 600px;
+    max-width: 900px;
+    /* box-shadow: 3px 4px 4px #888888; */
     justify-content: space-between;
     margin-bottom: 1px;
     
     
 }
+.task-text{
 
-.task-container h2{
-    padding-left: 20px;
-    user-select: none;
 }
 
-.task-container button{
+.task-text h2{
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    white-space: nowrap; 
+    overflow: hidden;
+    height: 100%;
+    text-overflow: ellipsis; 
+    padding: 0 30px;
+    user-select: none;
+    max-width: 450px;
+    
+    
+}
+
+.task-button {
+    height: 100%;
+}
+.task-button :hover{
+    background-color: rgba(212, 106, 6, 0.9);
+    transition: ease all .5s; 
+}
+
+.task-button button{
     outline: none;
     cursor: pointer;
-    background-color: rgb(0,132,255);
+    background-color: rgba(211, 122, 38, 0.9);
     border: none;
-    border-radius: 30px;
+    /* border-radius: 30px; */
     color: white;
-    padding: 0 32px;
-    text-align: center;
+    /* padding: 0 15px; */
     height: 100%;
+    text-align: center;
+    
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
     user-select: none;
 }
 
+.task-button .button-left{
+    border-radius:  50% 0 0 50%;
+}
+
+.task-button .button-middle{
+    border-left: solid gray 2px;
+    border-right: solid gray 2px;
+}
+.task-button .button-right{
+    border-radius:  0 50% 50% 0;
+}
 .task-isClicked h2{
     transform: translateX(30px);
     user-select: none;
     color: gray;
     text-decoration: line-through;
 }
-    
+
+
+
+.modal-left{
+
+}
+
+.modal-form{
+    display: flex;
+}
+
+.modal-right{
+
+}
+

@@ -5,9 +5,10 @@ import './styles.css'
 
 class Tasks extends Component {
   render() {
+    // console.log('todos:',this.props.todos);
     return (
       <div className="Tasks-container">
-        {this.props.todos.map(({ key, style, data: { name, isDone } }) => (
+        {this.props.todos.map(({ key, style, collaborators, data ,data: { name, isDone} }) => (
           <Task
             style={style}
             onClick={() => this.props.onClick(key, { name, isDone })}
@@ -15,6 +16,7 @@ class Tasks extends Component {
             doneIsClicked={isDone}
             key={key}
             name={name}
+            collaborators={data.collaborators}
           />
         ))}
       </div>

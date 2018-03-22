@@ -42,7 +42,7 @@ class Login extends Component {
 
   render() {
     if (this.state.redirect === true) {
-      return <Redirect to="/todos" />
+      return <Redirect to="/" />
     }
     return (
       <div className="login">

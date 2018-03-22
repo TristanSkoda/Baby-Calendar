@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import { app } from './base'
 import { Spinner } from '@blueprintjs/core'
 
+
 import './css/style.css'
 import './css/general.css'
 import './css/reset.css'
@@ -11,6 +12,8 @@ import Todos from './components/todoList/'
 import Logout from './components/logout'
 import Login from './components/login'
 import Header from './components/header'
+
+
 
 class App extends Component {
   constructor() {
@@ -24,8 +27,9 @@ class App extends Component {
     }
   }
   componentWillMount() {
-    this.removeAuthListener = app.auth().onAuthStateChanged(user => {
+    app.auth().onAuthStateChanged(user => {
       if (user) {
+        console.log('user: ',user);
         this.usersRef.child(user.uid).set({
           email: user.email,
           uid: user.uid
@@ -35,6 +39,7 @@ class App extends Component {
           loading: false
         })
       } else {
+        console.log('no user: ');
         this.setState({
           user: null,
           loading: false
@@ -60,7 +65,7 @@ class App extends Component {
       <div className="App">
         <BrowserRouter>
           <div className="app-container">
-            {this.state.authenticated ? <Header /> : null}
+            {this.state.user ? <Header /> : null}
             <Route exact path="/login" component={Login} />
             <Route exact path="/logout" component={Logout} />
             <Route

@@ -13,6 +13,7 @@ class App extends Component {
     super(props)
     this.ref = app.database().ref('baby-calendar')
     this.todosRef = this.ref.child('todos')
+    
 
     this.state = {
       todos: [],
@@ -22,14 +23,16 @@ class App extends Component {
   }
 
   componentWillMount() {
+    
+    console.log('this.props.user: ', this.props.user);
     const oldTodos = this.state.todos
     this.todosRef.on('child_added', snap => {
-      oldTodos.push({
-        userId: this.props.user.uid,
-        todoId: snap.key,
-        name: snap.val().name,
-        isDone: snap.val().isDone
-      })
+      if (this.props.user.uid === snap.val().userId || this.isACollaborator(Object.keys(snap.val().collaborators))) {
+        oldTodos.push({
+          ...snap.val(),
+          todoId: snap.key
+        })
+      }
       this.setState({
         todos: oldTodos
       })
@@ -44,10 +47,14 @@ class App extends Component {
       })
     })
 
+
+    // TODO: je ne comprends pa l'erreur : quand j'ai deux fenêtre d'ouverte, et que j'appuie sur une des tâches dans l'autre
+    // fenêtre la tâche appuyer se change mais ça change aussi la tâche en dessous
+    
     this.todosRef.on('child_changed', snap => {
       const newTodos = oldTodos.map(todo => {
         return todo.todoId === snap.key
-          ? { ...todo, isDone: todo.isDone }
+          ? snap.val()
           : todo
       })
       this.setState({
@@ -56,19 +63,36 @@ class App extends Component {
     })
   }
 
+  isACollaborator = collaborators => collaborators.some(collaborator => collaborator === this.props.user.uid)
+
   mapTodos = todos => todos.map(todo => this.mapTodo(todo))
 
-  mapTodo = todo => ({
-    todoId: todo.todoId,
-    key: todo.todoId,
-    data: {
-      name: todo.name,
-      isDone: todo.isDone
-    }
-  })
+  handleOption = pOption => this.setState({ option: pOption })  
+
+  handleChange = taskName => this.setState({ topBar: taskName })
+  
+
+  
+  mapTodo = todo => 
+  ({
+      todoId: todo.todoId,
+      key: todo.todoId,
+      data: {
+        collaborators: todo.collaborators,
+        name: todo.name,
+        isDone: todo.isDone
+      }
+    })
+  
 
   handleOnClick = (id, data) => {
     this.todosRef.child(id).update({ name: data.name, isDone: !data.isDone })
+ 
+    // à enlever TEST pour modifier les collaborateurs.
+    this.todosRef.child(id).child('collaborators').update({
+      Z0xoQpRgMJRaZgCfi2Fd1V7Fug93: true,
+      Z0xoQpRgMJRaZgCfi2Fd1V7Fug92: true
+    })
 
     this.setState({
       todos: this.state.todos.map(todo => {
@@ -83,11 +107,16 @@ class App extends Component {
     this.todosRef.push({
       name: name,
       isDone: false,
+      collaborators:{
+        Z0xoQpRgMJRaZgCfi2Fd1V7Fug92: true
+      },
       userId: this.props.user.uid
     })
-  }
 
-  handleChange = taskName => this.setState({ topBar: taskName })
+    this.todosRef.ref('-L88r_NP8cxnMM_pJr0l').child('collaborators').push({
+      Z0xoQpRgMJRaZgCfi2Fd1V7Fug93: true
+    })
+  }
 
   handleOnRemoveTodo = todoId => {
     this.todosRef.child(todoId).remove()
@@ -106,10 +135,10 @@ class App extends Component {
     })
   }
 
-  handleOption = pOption => this.setState({ option: pOption })
 
   getDefaultStyles = () => {
     const mapedTodos = this.mapTodos(this.state.todos)
+    console.log('todos: ',mapedTodos);
 
     return mapedTodos.map(todo => ({
       ...todo,
