@@ -12,22 +12,30 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.ref = app.database().ref('baby-calendar')
+    this.usersRef = this.ref.child('users')    
     this.todosRef = this.ref.child('todos')
-    
 
     this.state = {
       todos: [],
       topBar: '',
-      option: 'All'
+      option: 'All',
+      users: []
     }
   }
+  /* 
+    1. si tu n'est pas le créateur du todo, tu ne peux pas add des collaborateurs au todo.
+    2. quand tu supprim un todo dont tu étais collaborateur, tu enlève la collaboration à ce todo.
+    3.
+   */
 
   componentWillMount() {
-    
-    console.log('this.props.user: ', this.props.user);
     const oldTodos = this.state.todos
     this.todosRef.on('child_added', snap => {
-      if (this.props.user.uid === snap.val().userId || this.isACollaborator(Object.keys(snap.val().collaborators))) {
+      console.log('added');
+      if (
+        this.props.user.uid === snap.val().userId ||
+        this.isACollaborator(Object.keys(snap.val().collaborators))
+      ) {
         oldTodos.push({
           ...snap.val(),
           todoId: snap.key
@@ -39,6 +47,7 @@ class App extends Component {
     })
 
     this.todosRef.on('child_removed', snap => {
+      console.log('removed');
       for (var i = 0; i < oldTodos.length; i++) {
         if (oldTodos[i].todoId === snap.key) oldTodos.splice(i, 1)
       }
@@ -47,57 +56,81 @@ class App extends Component {
       })
     })
 
-
     // TODO: je ne comprends pa l'erreur : quand j'ai deux fenêtre d'ouverte, et que j'appuie sur une des tâches dans l'autre
     // fenêtre la tâche appuyer se change mais ça change aussi la tâche en dessous
-    
     this.todosRef.on('child_changed', snap => {
+      console.log('changed');
       const newTodos = oldTodos.map(todo => {
-        return todo.todoId === snap.key
-          ? snap.val()
-          : todo
+        return todo.todoId === snap.key ? snap.val() : todo
       })
       this.setState({
         todos: newTodos
       })
     })
+
+    const newUsers = []
+    this.usersRef.on('child_added', snap => {
+      newUsers.push(snap.val())
+    })
+    this.setState({
+      users: newUsers
+    })
   }
 
-  isACollaborator = collaborators => collaborators.some(collaborator => collaborator === this.props.user.uid)
+  isACollaborator = collaborators =>
+    collaborators.some(collaborator => collaborator === this.props.user.uid)
 
   mapTodos = todos => todos.map(todo => this.mapTodo(todo))
 
-  handleOption = pOption => this.setState({ option: pOption })  
+  handleOption = pOption => this.setState({ option: pOption })
 
   handleChange = taskName => this.setState({ topBar: taskName })
-  
 
-  
-  mapTodo = todo => 
-  ({
-      todoId: todo.todoId,
-      key: todo.todoId,
-      data: {
-        collaborators: todo.collaborators,
-        name: todo.name,
-        isDone: todo.isDone
-      }
+  mapCollaborators = (collaborators) =>{
+    console.log('users',this.state.users);
+    
+    this.state.users.forEach(user => {
+      console.log('user', user);
     })
-  
+
+
+    const mapCollaborators = []
+    // console.log('users',this.state.users);
+    // console.log('collaborators : ',collaborators);
+    Object.keys(collaborators).forEach(collaborator => {
+      // console.log('collab1', collaborator);
+      this.state.users.forEach(user => {
+        // console.log('uid', user.uid);
+        // console.log('collab2', collaborator);
+        if (user.uid === collaborator) {
+          mapCollaborators.push({
+            email: user.email,
+            collaborator: collaborator
+          })
+        }
+      })
+    })
+    return mapCollaborators
+  }
+
+  mapTodo = todo => ({
+    todoId: todo.todoId,
+    key: todo.todoId,
+    data: {
+      userId: todo.userId,
+      collaborators: this.mapCollaborators(todo.collaborators),
+      name: todo.name,
+      isDone: todo.isDone
+    }
+  })
+
 
   handleOnClick = (id, data) => {
     this.todosRef.child(id).update({ name: data.name, isDone: !data.isDone })
- 
-    // à enlever TEST pour modifier les collaborateurs.
-    this.todosRef.child(id).child('collaborators').update({
-      Z0xoQpRgMJRaZgCfi2Fd1V7Fug93: true,
-      Z0xoQpRgMJRaZgCfi2Fd1V7Fug92: true
-    })
-
     this.setState({
       todos: this.state.todos.map(todo => {
         const { todoId, name, isDone } = todo
-        if (todoId === id) return { todoId, name, isDone: !isDone }
+        if (todoId === id) return { ...todo, isDone: !isDone }
         else return todo
       })
     })
@@ -106,21 +139,29 @@ class App extends Component {
   handleAddTodo = name => {
     this.todosRef.push({
       name: name,
-      isDone: false,
       collaborators:{
-        Z0xoQpRgMJRaZgCfi2Fd1V7Fug92: true
+        [this.props.user.uid]:true
       },
+      isDone: false,
       userId: this.props.user.uid
-    })
-
-    this.todosRef.ref('-L88r_NP8cxnMM_pJr0l').child('collaborators').push({
-      Z0xoQpRgMJRaZgCfi2Fd1V7Fug93: true
     })
   }
 
   handleOnRemoveTodo = todoId => {
+    // si il est le créateur du todo on le supprime pour vraie. si non, on l'enlève des collaborateurs.
     this.todosRef.child(todoId).remove()
   }
+  handleAddACollaborator = (todoId, userId) =>{
+    this.todosRef
+      .child(todoId)
+      .child('collaborators')
+      .update({
+        [userId]: true
+      })
+    }
+  
+  
+
 
   handleClearAllDone = () => {
     this.setState({
@@ -135,10 +176,10 @@ class App extends Component {
     })
   }
 
-
   getDefaultStyles = () => {
     const mapedTodos = this.mapTodos(this.state.todos)
-    console.log('todos: ',mapedTodos);
+    console.log('not maptodo: ', this.state.todos);
+    console.log('maptodos: ', mapedTodos)
 
     return mapedTodos.map(todo => ({
       ...todo,
@@ -195,7 +236,9 @@ class App extends Component {
           >
             {styles => (
               <Tasks
+              
                 todos={styles}
+                addACollaborator={this.handleAddACollaborator}
                 onRemoveTodo={this.handleOnRemoveTodo}
                 onClick={this.handleOnClick}
               />
