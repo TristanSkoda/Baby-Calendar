@@ -29,20 +29,14 @@ class App extends Component {
    */
 
   componentWillMount() {
-    const oldTodos = this.state.todos
     this.todosRef.on('child_added', snap => {
       console.log('added');
       if (
         this.props.user.uid === snap.val().userId ||
         this.isACollaborator(Object.keys(snap.val().collaborators))
-      ) {
-        oldTodos.push({
-          ...snap.val(),
-          todoId: snap.key
-        })
-      }
+      ) 
       this.setState({
-        todos: oldTodos
+        todos: [...this.state.todos, {...snap.val(), todoId: snap.key}]
       })
     })
 
@@ -68,12 +62,12 @@ class App extends Component {
       })
     })
 
-    const newUsers = []
+   
+    
     this.usersRef.on('child_added', snap => {
-      newUsers.push(snap.val())
-    })
-    this.setState({
-      users: newUsers
+      this.setState({
+        users: [...this.state.users, snap.val()]
+      })
     })
   }
 
@@ -88,12 +82,12 @@ class App extends Component {
 
   mapCollaborators = (collaborators) =>{
     console.log('users',this.state.users);
-    
+    console.log('users',this.state.users[0]);
+    console.log('users2',this.state.users[1]);
+
     this.state.users.forEach(user => {
-      console.log('user', user);
+      console.log('uid', user.uid);
     })
-
-
     const mapCollaborators = []
     // console.log('users',this.state.users);
     // console.log('collaborators : ',collaborators);
