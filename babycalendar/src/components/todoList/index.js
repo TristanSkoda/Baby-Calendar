@@ -30,40 +30,48 @@ class App extends Component {
 
   componentWillMount() {
     this.todosRef.on('child_added', snap => {
-      console.log('added');
+      console.log('snap: ', snap.val());
+      console.log('collaborators', Object.keys(snap.val().collaborators));
+      console.log('isAcollab: ',this.isACollaborator(Object.keys(snap.val().collaborators)));
       if (
         this.props.user.uid === snap.val().userId ||
         this.isACollaborator(Object.keys(snap.val().collaborators))
-      ) 
-      this.setState({
-        todos: [...this.state.todos, {...snap.val(), todoId: snap.key}]
-      })
+      ) {
+        this.setState({
+          todos: [...this.state.todos, {...snap.val(), todoId: snap.key}]
+        })
+      }
     })
 
     this.todosRef.on('child_removed', snap => {
-      console.log('removed');
-      for (var i = 0; i < oldTodos.length; i++) {
-        if (oldTodos[i].todoId === snap.key) oldTodos.splice(i, 1)
-      }
+      // console.log('todos', [...this.state.todos]);
       this.setState({
-        todos: oldTodos
+        todos: [...this.state.todos].filter(todo =>
+          todo.todoId !== snap.key
+        )
       })
     })
+    
+    // for (var i = 0; i < [...this.state.todos].length; i++) {
+    //   if ([...this.state.todos][i].todoId === snap.key) [...this.state.todos].splice(i, 1)
+    // }
+    // this.setState({
+    //   todos: 
+    // })
+    
 
     // TODO: je ne comprends pa l'erreur : quand j'ai deux fenêtre d'ouverte, et que j'appuie sur une des tâches dans l'autre
     // fenêtre la tâche appuyer se change mais ça change aussi la tâche en dessous
     this.todosRef.on('child_changed', snap => {
-      console.log('changed');
-      const newTodos = oldTodos.map(todo => {
-        return todo.todoId === snap.key ? snap.val() : todo
-      })
+      console.log('todos :', [this.state.todos]);
       this.setState({
-        todos: newTodos
+        todos: [...this.state.todos].map(todo => {
+          console.log('snap: ',todo);
+          return todo.todoId === snap.key ? {...snap.val(), todoId: snap.key} : todo
+        })
       })
     })
 
-   
-    
     this.usersRef.on('child_added', snap => {
       this.setState({
         users: [...this.state.users, snap.val()]
@@ -72,7 +80,11 @@ class App extends Component {
   }
 
   isACollaborator = collaborators =>
-    collaborators.some(collaborator => collaborator === this.props.user.uid)
+    collaborators.some(collaborator =>{
+      console.log('collaborator', collaborator);
+      console.log('user.uid', this.props.user.uid);
+     return collaborator === this.props.user.uid
+    })
 
   mapTodos = todos => todos.map(todo => this.mapTodo(todo))
 
@@ -81,30 +93,21 @@ class App extends Component {
   handleChange = taskName => this.setState({ topBar: taskName })
 
   mapCollaborators = (collaborators) =>{
-    console.log('users',this.state.users);
-    console.log('users',this.state.users[0]);
-    console.log('users2',this.state.users[1]);
+    
 
-    this.state.users.forEach(user => {
-      console.log('uid', user.uid);
-    })
-    const mapCollaborators = []
-    // console.log('users',this.state.users);
-    // console.log('collaborators : ',collaborators);
+   
+    const newCollaborators = []
     Object.keys(collaborators).forEach(collaborator => {
-      // console.log('collab1', collaborator);
       this.state.users.forEach(user => {
-        // console.log('uid', user.uid);
-        // console.log('collab2', collaborator);
         if (user.uid === collaborator) {
-          mapCollaborators.push({
+          newCollaborators.push({
             email: user.email,
             collaborator: collaborator
           })
         }
       })
     })
-    return mapCollaborators
+    return newCollaborators
   }
 
   mapTodo = todo => ({
@@ -123,7 +126,7 @@ class App extends Component {
     this.todosRef.child(id).update({ name: data.name, isDone: !data.isDone })
     this.setState({
       todos: this.state.todos.map(todo => {
-        const { todoId, name, isDone } = todo
+        const { todoId, isDone } = todo
         if (todoId === id) return { ...todo, isDone: !isDone }
         else return todo
       })
@@ -171,9 +174,9 @@ class App extends Component {
   }
 
   getDefaultStyles = () => {
+    // console.log('not maptodo: ', this.state.todos);
     const mapedTodos = this.mapTodos(this.state.todos)
-    console.log('not maptodo: ', this.state.todos);
-    console.log('maptodos: ', mapedTodos)
+    // console.log('maptodos: ', mapedTodos)
 
     return mapedTodos.map(todo => ({
       ...todo,
@@ -216,6 +219,7 @@ class App extends Component {
 
   render() {
     const { option } = this.state
+    console.log('todos: ', this.state.todos);
     return (
       <div className="Todos">
         <h1>Todo List</h1>
