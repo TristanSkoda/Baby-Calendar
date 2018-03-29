@@ -7,13 +7,14 @@ class TopBar extends Component {
     super(props)
     this.state = { value: '' }
   }
-  handleChange = event => {
+  
+  _handleChange = event => {
     this.setState({ value: event.target.value })
 
     this.props.onChange(event.target.value)
   }
 
-  handleSubmit = event => {
+  _handleSubmit = event => {
     event.preventDefault()
 
     if (this.state.value !== '') {
@@ -24,10 +25,10 @@ class TopBar extends Component {
   render() {
     return (
       <div className="topbar-container">
-        <form onSubmit={this.handleSubmit} className="topbar-container-form">
+        <form onSubmit={this._handleSubmit} className="topbar-container-form">
           <input
             type="text"
-            onChange={this.handleChange}
+            onChange={this._handleChange}
             placeholder="Enter a task"
           />
           <button>Submit</button>

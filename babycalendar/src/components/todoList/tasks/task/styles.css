@@ -14,9 +14,6 @@
     
     
 }
-.task-text{
-
-}
 
 .task-text h2{
     display: flex;
@@ -37,18 +34,17 @@
     height: 100%;
 }
 .task-button :hover{
-    background-color: rgba(212, 106, 6, 0.9);
+    background-color: rgba(0, 122, 253, 0.9);
     transition: ease all .5s; 
 }
 
 .task-button button{
     outline: none;
     cursor: pointer;
-    background-color: rgba(211, 122, 38, 0.9);
+    background-color: rgba(23, 135, 251, 0.9);
     border: none;
-    /* border-radius: 30px; */
+    width: 60px;
     color: white;
-    /* padding: 0 15px; */
     height: 100%;
     text-align: center;
     
@@ -59,15 +55,11 @@
 }
 
 .task-button .button-left{
-    border-radius:  50% 0 0 50%;
+    border-radius: 50%;
 }
 
-.task-button .button-middle{
-    border-left: solid gray 2px;
-    border-right: solid gray 2px;
-}
 .task-button .button-right{
-    border-radius:  0 50% 50% 0;
+    border-radius:  50% ;
 }
 .task-isClicked h2{
     transform: translateX(30px);
@@ -76,17 +68,4 @@
     text-decoration: line-through;
 }
 
-
-
-.modal-left{
-
-}
-
-.modal-form{
-    display: flex;
-}
-
-.modal-right{
-
-}
 

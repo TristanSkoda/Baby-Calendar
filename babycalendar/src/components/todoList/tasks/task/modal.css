@@ -1,0 +1,29 @@
+
+
+.form-button{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.modal-form{
+    
+}
+
+.modal-right{
+    position: relative;
+
+    margin-left: 15px;
+}
+.modal-right button{
+    position: absolute;
+    right: 0;
+  bottom: 0;
+  
+}
+
+
+
+.modal-right p{
+    margin: 10px 0;
+}

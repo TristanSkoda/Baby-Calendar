@@ -24,6 +24,7 @@ class App extends Component {
     }
   }
   componentWillMount() {
+    // quand un user se connect ou se déconnect.
     app.auth().onAuthStateChanged(user => {
       if (user) {
         console.log('user: ', user)

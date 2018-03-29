@@ -42,7 +42,7 @@
     outline: none;
     cursor: pointer;
     color: white;
-    background: linear-gradient(70deg, #d27926cc, #FFFCCF);
+    background: linear-gradient(150deg, #35CEFB, #B238FB);
 }
 .signin-container a{
     color: gray;
@@ -51,7 +51,7 @@
 }
 
 .login-container .signup{
-    background-color: rgba(211, 122, 38, 0.9);
+    background-color: rgba(23, 135, 251, 0.9);
     padding: 155px 55px 80px 40px;
     width: 50%;
     border-radius: 0 2px 2px 0;
@@ -80,6 +80,6 @@
     outline: none;
     cursor: pointer;
     color: rgba(255, 255, 255, 0.863);
-    background-color: rgba(211, 122, 38, 0.9);
+    background-color: rgba(178, 56, 251, 0.9);
 }
 

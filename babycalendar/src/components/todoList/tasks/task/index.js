@@ -3,7 +3,9 @@ import Modal from 'react-modal'
 import { app } from '../../../../base'
 
 import './styles.css'
-
+import './modal.css'
+// TODO:
+// le style pour le component Modal
 const customStyles = {
   content: {
     top: '50%',
@@ -35,57 +37,49 @@ class Task extends Component {
   }
 
   componentWillMount = () => {
+
     app.auth().onAuthStateChanged(user =>{
       this.setState({
         user: user
       })
     })
-    const newUsers = []
+
+    // fetch tous les user de la BD dans le state users
     this.usersRef.on('child_added', snap => {
-      newUsers.push(snap.val())
-    })
-    this.setState({
-      users: newUsers
+      this.setState(currentState=>({
+        users: [...currentState.users, snap.val()]
+      }))
     })
   }
 
-  openModal = () => {
+  _openModal = () => {
     this.setState({
       modalIsOpen: true,
     })
   }
 
-  // afterOpenModal = () => {
-  //   // references are now sync'd and can be accessed.
-  //   // this.subtitle.style.color = '#f00';
-  // }
-
-  closeModal = () => {
+  _closeModal = () => {
     this.setState({ modalIsOpen: false })
   }
 
-  getGoodEmail = () =>
+  // retourne les email des users.
+  _getUsersEmail = () =>
     this.state.value !== ''
       ? this.state.users.filter(user => user.email.includes(this.state.value))
       : []
 
-  handleChange = event => {
+  // enregistre le input pour les collab.
+  _handleChange = event => {
     this.setState({ value: event.target.value })
   }
 
-  handleRemoveTodo = () => {
-    this.props.onRemoveTodo()
-  }
-  handleShareTodo = () => {
-    this.props.shareTodo()
-  }
-  handleClickOnEmail = data => {
-    this.setState({
-      value: data
-    })
+  
+  // prends le email clicker et le met dans le input.
+  _handleClickOnEmail = data => {
+    this.setState({ value: data })
   }
 
-  handleSubmit = event => {
+  _handleSubmit = event => {
     event.preventDefault()
     this.state.users.forEach(user => {
       user.email === this.state.value
@@ -95,9 +89,19 @@ class Task extends Component {
     })
   }
 
+  // avec le email entré dans le input on regarde il appartient à qui et on envoie son uid
+  _handleRemoveCollaborator = event =>{
+    event.preventDefault()
+    this.state.users.forEach(user => {
+      (user.email === this.state.value && user.uid !== this.props.userId)
+        ? // supprime le uid du user dans la BD dans les collaborateurs de la tâche
+          this.props.removeACollaborator(user.uid)
+        : null
+    })
+  }
+
  
   render() {
-    // console.log('props collabor: ',this.props.collaborators);
     return (
       <div style={this.props.style} className="task-container">
         <div
@@ -110,15 +114,15 @@ class Task extends Component {
         </div>
         <div className="task-button">
         {this.props.userId === this.state.user.uid
-        ? 
-          <div>
-            <button onClick={this.openModal} className="button-left">
-              Share
-            </button>
+          ? <button onClick={this._openModal} className="button-left">Share</button>
+          : null
+        }
+          {/* <div className="modal-container"> */}
+          
             <Modal
               isOpen={this.state.modalIsOpen}
-              onAfterOpen={this.afterOpenModal}
-              onRequestClose={this.closeModal}
+              onAfterOpen={this._afterOpenModal}
+              onRequestClose={this._closeModal}
               style={customStyles}
               contentLabel="Example Modal"
               >
@@ -126,40 +130,38 @@ class Task extends Component {
                 <h2 ref={subtitle => (this.subtitle = subtitle)}>
                   Add collaborators
                 </h2>
-                <form onSubmit={this.handleSubmit} className="modal-form">
+                <form onSubmit={this._handleSubmit} className="modal-form">
                   <input
                     type="text"
-                    onChange={this.handleChange}
-                    placeholder="enter email@"
+                    onChange={this._handleChange}
+                    placeholder="email@calendar.com"
                     value={this.state.value}
                   />
-                  <button>Add</button>
+                  {this._getUsersEmail().map(user => (
+                    <p
+                      key={user.uid}
+                      onClick={() => this._handleClickOnEmail(user.email)}
+                    >
+                      {user.email}
+                    </p>
+                  ))}
+                  <div className="form-button">
+                    <button type='submit' >Add</button>
+                    <button onClick={this._handleRemoveCollaborator} >Remove</button>
+                  </div>
                 </form>
-                {this.getGoodEmail().map(user => (
-                  <p
-                    key={user.uid}
-                    onClick={() => this.handleClickOnEmail(user.email)}
-                  >
-                    {user.email}
-                  </p>
-                ))}
               </div>
               <div className="modal-right">
-                <h3>present collaborators</h3>
+                <h2>current collaborators</h2>
                 {
-                  this.props.collaborators.map(collaborator => (
-                  <p key={collaborator} > {collaborator.email} </p>
+                  this.props.collaborators.map((collaborator, index) => (
+                  <p key={index} > {collaborator.email} </p>
                 ))}
-                <button onClick={this.closeModal}>close</button>
+                <button onClick={this._closeModal}>close</button>
               </div>
             </Modal>
-            <button onClick={this.handleUnshareTodo} className="button-middle">
-              Unshare
-            </button>
-          </div>
-          : null
-        }
-          <button onClick={this.handleRemoveTodo} className="button-right">
+          {/* </div> */}
+          <button onClick={this.props.onRemoveTodo} className="button-right">
             Delete
           </button>
         </div>

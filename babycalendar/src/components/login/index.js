@@ -13,7 +13,7 @@ class Login extends Component {
     }
   }
 
-  authWithEmailAndPassword = event => {
+  _authWithEmailAndPassword = event => {
     event.preventDefault()
     const email = this.emailInput.value
     const password = this.passwordInput.value
@@ -52,7 +52,7 @@ class Login extends Component {
             <div className="signin-container">
               <h1>Sign In</h1>
               <form
-                onSubmit={this.authWithEmailAndPassword}
+                onSubmit={this._authWithEmailAndPassword}
                 ref={form => {
                   this.loginForm = form
                 }}

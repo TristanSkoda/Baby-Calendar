@@ -16,7 +16,7 @@
 .bottombar-container button{
     outline: none;
     cursor: pointer;
-    background-color: rgba(211, 122, 38, 0.9);
+    background-color: rgba(23, 135, 251, 0.9);
     border: none;
     border-radius: 30px;
     color: white;
@@ -30,12 +30,12 @@
 }
 
 .bottombar-container .selected{
-    background-color: rgba(209, 112, 21, 0.9);
+    background-color: rgba(0, 122, 253, 0.9);
     transition: .5s ease all;
 }
 
 .clearall:hover{
-    background-color: rgba(209, 112, 21, 0.9);
+    background-color: rgba(0, 122, 253, 0.9);
 
     transition: .5s ease all; 
 }
